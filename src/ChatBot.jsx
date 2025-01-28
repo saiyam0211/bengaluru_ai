@@ -111,7 +111,7 @@ const BangaloreChatBot = () => {
         // Include the system message in the conversation history
         const messages = [systemMessage, ...currentChat.messages, userMessage];
         
-        const response = await fetch('http://localhost:5000/api/chat', {
+        const response = await fetch('https://bengaluru-ai-1.onrender.com/api/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

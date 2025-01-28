@@ -6,7 +6,7 @@ import json
 app = Flask(__name__)
 CORS(app, resources={
     r"/api/*": {
-        "origins": ["http://localhost:3000", "http://localhost:5173", "https://bengaluru-ai.netlify.app"],
+        "origins": ["https://bengaluru-ai.netlify.app/","https://bengaluru-ai.netlify.app/*","http://localhost:3000", "http://localhost:5173", "https://bengaluru-ai.netlify.app"],
         "methods": ["POST"],
         "allow_headers": ["Content-Type"]
     }
