@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Send, User, Bot, Search, Plus, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Send, User, Bot, Search, Plus, AlertCircle, Menu, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const BangaloreChatBot = () => {
   const [chats, setChats] = useState([
@@ -9,6 +10,24 @@ const BangaloreChatBot = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Handle sidebar visibility based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setSidebarOpen(true);
+      } else {
+        setSidebarOpen(false);
+      }
+    };
+
+    // Set initial state
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // System message to enforce Bangalore-specific responses
   const systemMessage = {
@@ -63,6 +82,11 @@ const BangaloreChatBot = () => {
     setChats(prev => [newChat, ...prev]);
     setActiveChat(newChat.id);
     setError(null);
+    
+    // Close sidebar on mobile after creating a new chat
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
   };
 
   const updateChatName = (chatId, message) => {
@@ -145,13 +169,72 @@ const BangaloreChatBot = () => {
     } finally {
         setIsLoading(false);
     }
-};
+  };
+
+  const handleChatSelect = (chatId) => {
+    setActiveChat(chatId);
+    // Close sidebar on mobile after selecting a chat
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  };
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  // Animation variants
+  const sidebarVariants = {
+    open: { 
+      x: 0,
+      transition: { type: "spring", stiffness: 300, damping: 30 }
+    },
+    closed: { 
+      x: "-100%",
+      transition: { type: "spring", stiffness: 300, damping: 30 }
+    }
+  };
+
+  const fadeInVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.3 } }
+  };
+
+  const messageVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+    exit: { opacity: 0, y: -20, transition: { duration: 0.2 } }
+  };
+
   return (
-    <div className="flex h-screen bg-black text-white">
+    <div className="flex h-screen bg-black text-white overflow-hidden">
+      {/* Mobile Sidebar Backdrop */}
+      <AnimatePresence>
+        {sidebarOpen && window.innerWidth < 768 && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.5 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black z-10 md:hidden"
+            onClick={toggleSidebar}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Sidebar */}
-      <div className="w-64 bg-zinc-900 p-4 flex flex-col">
+      <motion.div 
+        className="w-64 bg-zinc-900 p-4 flex flex-col z-20 fixed md:static h-full"
+        variants={sidebarVariants}
+        initial={window.innerWidth >= 768 ? "open" : "closed"}
+        animate={sidebarOpen ? "open" : "closed"}
+      >
         <div className="flex items-center justify-between mb-4">
           <span className="font-semibold">Bangalore AI Guide</span>
+          {window.innerWidth < 768 && (
+            <button onClick={toggleSidebar} className="md:hidden">
+              <X className="w-5 h-5" />
+            </button>
+          )}
         </div>
         
         <div className="relative mb-4">
@@ -163,111 +246,182 @@ const BangaloreChatBot = () => {
           />
         </div>
 
-        <button 
+        <motion.button 
           onClick={createNewChat}
           className="mb-4 bg-green-500 text-black rounded-md py-2 px-4 flex items-center justify-center gap-2 hover:bg-green-400"
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
         >
           <Plus className="w-4 h-4" />
           New Chat
-        </button>
+        </motion.button>
 
         <div className="flex-1 overflow-y-auto">
-          <div className="space-y-1">
+          <motion.div 
+            className="space-y-1"
+            initial="hidden"
+            animate="visible"
+            variants={fadeInVariants}
+          >
             {chats.map((chat) => (
-              <button 
+              <motion.button 
                 key={chat.id}
-                onClick={() => setActiveChat(chat.id)}
+                onClick={() => handleChatSelect(chat.id)}
                 className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2
                   ${activeChat === chat.id 
                     ? 'bg-zinc-800 text-white' 
                     : 'text-gray-300 hover:bg-zinc-800/50'
                   }`}
+                whileHover={{ backgroundColor: activeChat === chat.id ? "#222" : "#333", x: 2 }}
+                whileTap={{ scale: 0.98 }}
               >
                 <Bot className="w-4 h-4 shrink-0" />
                 <span className="truncate">{chat.name}</span>
-              </button>
+              </motion.button>
             ))}
-          </div>
+          </motion.div>
         </div>
         <div className="footer-text text-xs text-center justify-center">
           Made with 🤍 by <a href="https://devitup.in" target='_blank' className='font-black'>DevItUp</a>
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col bg-zinc-900">
+      <div className="flex-1 flex flex-col bg-zinc-900 w-full">
         {/* Chat Header */}
-        <div className="border-b border-zinc-800 p-4">
-          <h1 className="text-xl font-semibold">Bangalore City Guide</h1>
-          <p className="text-sm text-gray-400">Ask me anything about Bangalore - from tourist spots to tech parks!</p>
+        <div className="border-b border-zinc-800 p-4 flex items-center">
+          {window.innerWidth < 768 && (
+            <motion.button 
+              onClick={toggleSidebar}
+              className="mr-3"
+              whileTap={{ scale: 0.9 }}
+            >
+              <Menu className="w-5 h-5" />
+            </motion.button>
+          )}
+          <div>
+            <h1 className="text-xl font-semibold">Bangalore City Guide</h1>
+            <p className="text-sm text-gray-400">Ask me anything about Bangalore - from tourist spots to tech parks!</p>
+          </div>
         </div>
 
         {/* Error Display */}
-        {error && (
-          <div className="m-4 bg-red-900/50 border border-red-500 text-red-200 px-4 py-3 rounded-lg flex items-center gap-2">
-            <AlertCircle className="w-5 h-5" />
-            <span>{error}</span>
-          </div>
-        )}
+        <AnimatePresence>
+          {error && (
+            <motion.div 
+              className="m-4 bg-red-900/50 border border-red-500 text-red-200 px-4 py-3 rounded-lg flex items-center gap-2"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <AlertCircle className="w-5 h-5" />
+              <span>{error}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Chat Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {currentChat.messages.map((message, index) => (
-            <div
-              key={index}
-              className={`flex items-start gap-2 ${
-                message.role === 'user' ? 'justify-end' : 'justify-start'
-              }`}
-            >
-              <div className={`max-w-[80%] rounded-lg p-3 ${
-                message.role === 'user' 
-                  ? 'bg-green-500 text-black' 
-                  : 'bg-zinc-800'
-              }`}>
-                <div className="flex items-center gap-2 mb-1">
-                  {message.role === 'user' ? (
-                    <User className="w-4 h-4" />
-                  ) : (
-                    <Bot className="w-4 h-4" />
-                  )}
-                  <span className="font-semibold">
-                    {message.role === 'user' ? 'You' : 'Bangalore Guide'}
-                  </span>
-                </div>
-                <div className="whitespace-pre-wrap">{message.content}</div>
-              </div>
-            </div>
-          ))}
+          <AnimatePresence initial={false}>
+            {currentChat.messages.map((message, index) => (
+              <motion.div
+                key={index}
+                className={`flex items-start gap-2 ${
+                  message.role === 'user' ? 'justify-end' : 'justify-start'
+                }`}
+                variants={messageVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                layout
+              >
+                <motion.div 
+                  className={`max-w-[80%] rounded-lg p-3 ${
+                    message.role === 'user' 
+                      ? 'bg-green-500 text-black' 
+                      : 'bg-zinc-800'
+                  }`}
+                  whileHover={{ scale: 1.01 }}
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    {message.role === 'user' ? (
+                      <User className="w-4 h-4" />
+                    ) : (
+                      <Bot className="w-4 h-4" />
+                    )}
+                    <span className="font-semibold">
+                      {message.role === 'user' ? 'You' : 'Bangalore Guide'}
+                    </span>
+                  </div>
+                  <div className="whitespace-pre-wrap">{message.content}</div>
+                </motion.div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          
           {isLoading && (
-            <div className="flex items-center gap-2 text-gray-400 bg-zinc-800 p-3 rounded-lg max-w-[80%]">
+            <motion.div 
+              className="flex items-center gap-2 text-gray-400 bg-zinc-800 p-3 rounded-lg max-w-[80%]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
               <Bot className="w-4 h-4" />
-              <span>Thinking about Bangalore...</span>
-            </div>
+              <motion.span
+                initial={{ opacity: 0.5 }}
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                Thinking about Bangalore...
+              </motion.span>
+            </motion.div>
           )}
         </div>
 
         {/* Quick Actions - Only shown for new chats */}
-        {/* {currentChat.messages.length === 0 && (
-          <div className="p-4 grid grid-cols-3 gap-4">
-            {quickActions.map((action, index) => (
-              <button 
-                key={index}
-                onClick={() => handleQuickAction(action.prompt)}
-                className="p-4 bg-zinc-800 rounded-lg hover:bg-zinc-700 transition-colors text-left"
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <Bot className="w-5 h-5 text-green-500" />
-                  <span className="font-medium">{action.title}</span>
-                </div>
-                <p className="text-sm text-gray-400">{action.description}</p>
-              </button>
-            ))}
-          </div>
-        )} */}
+        <AnimatePresence>
+          {currentChat.messages.length === 0 && (
+            <motion.div 
+              className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
+            >
+              {quickActions.map((action, index) => (
+                <motion.button 
+                  key={index}
+                  onClick={() => handleQuickAction(action.prompt)}
+                  className="p-4 bg-zinc-800 rounded-lg hover:bg-zinc-700 transition-colors text-left"
+                  whileHover={{ scale: 1.03, backgroundColor: "#333" }}
+                  whileTap={{ scale: 0.97 }}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                  initial="hidden"
+                  animate="visible"
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <Bot className="w-5 h-5 text-green-500" />
+                    <span className="font-medium">{action.title}</span>
+                  </div>
+                  <p className="text-sm text-gray-400">{action.description}</p>
+                </motion.button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Input Area */}
         <div className="p-4 border-t border-zinc-800">
-          <div className="flex items-center gap-2">
+          <motion.div 
+            className="flex items-center gap-2"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
             <input
               type="text"
               value={inputMessage}
@@ -277,14 +431,16 @@ const BangaloreChatBot = () => {
               className="flex-1 bg-zinc-800 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-green-500"
               disabled={isLoading}
             />
-            <button
+            <motion.button
               onClick={handleSendMessage}
               disabled={isLoading || !inputMessage.trim()}
               className="p-2 bg-green-500 text-black rounded-lg hover:bg-green-400 disabled:opacity-50 disabled:cursor-not-allowed"
+              whileHover={{ scale: 1.05, backgroundColor: "#22c55e" }}
+              whileTap={{ scale: 0.95 }}
             >
               <Send className="w-5 h-5" />
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         </div>
       </div>
     </div>
@@ -292,4 +448,3 @@ const BangaloreChatBot = () => {
 };
 
 export default BangaloreChatBot;
-
