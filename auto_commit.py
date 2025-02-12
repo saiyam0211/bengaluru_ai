@@ -28,7 +28,7 @@ def main():
             commit_changes(commit_date)
 
     # Push to GitHub
-    subprocess.run(["git", "push", "origin", "main"], check=True)
+    subprocess.run(["git", "push", "origin", "master"], check=True)
 
 if __name__ == "__main__":
     main()
