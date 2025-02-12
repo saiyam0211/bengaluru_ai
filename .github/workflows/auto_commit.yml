@@ -1,0 +1,27 @@
+name: Auto Commit
+
+on:
+  schedule:
+    - cron: "0 12 * * *" # Runs daily at 12 PM UTC
+  workflow_dispatch:
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set Up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.x"
+
+      - name: Run Auto Commit Script
+        run: python auto_commit.py
+
+      - name: Push Changes
+        run: |
+          git config --global user.email "your-email@example.com"
+          git config --global user.name "Your GitHub Name"
+          git push origin main
