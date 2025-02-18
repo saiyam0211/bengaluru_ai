@@ -3,63 +3,59 @@ import random
 import datetime
 import subprocess
 
+# Constants
 FILE_NAME = "activity_log.txt"
-DAYS_TO_FILL = (datetime.datetime.today() - datetime.datetime(2025, 2, 1)).days  # Days since Feb 1, 2025
+DAYS_TO_FILL = (datetime.datetime.today() - datetime.datetime(2025, 2, 1)).days  # From Feb 1, 2025, till today
 
-# Random commit distribution settings
-HEAVY_RANGE = (20, 30)  # One day per week gets 20-30 commits
-MEDIUM_RANGE = (10, 20)  # One day per week gets 10-20 commits
-LIGHT_RANGE = (0, 10)    # Other days get 0-10 commits
+# Weekly contribution pattern
+def get_commit_count(day_index):
+    """Randomly determine the number of commits based on the weekly pattern."""
+    week_day = day_index % 7  # Get day index in a week
 
+    if week_day == random.randint(0, 6):  # Skip one random day per week
+        return 0
+    elif week_day == random.randint(0, 6):  # One heavy commit day
+        return random.randint(20, 30)
+    elif week_day == random.randint(0, 6):  # One medium commit day
+        return random.randint(10, 20)
+    else:  # Rest of the days (light commits)
+        return random.randint(0, 10)
 
+# Commit function
 def commit_changes(commit_date, commit_count):
-    """Make a commit with the specified date and count."""
-    with open(FILE_NAME, "a") as file:
-        for _ in range(commit_count):
+    """Create commits with changes."""
+    for _ in range(commit_count):
+        with open(FILE_NAME, "a") as file:
             file.write(f"Commit on {commit_date}\n")
-            subprocess.run(["git", "add", FILE_NAME], check=True)
-            subprocess.run(["git", "commit", "--date", commit_date, "-m", f"Auto commit for {commit_date}"], check=True)
 
+        subprocess.run(["git", "add", FILE_NAME], check=True)
+        subprocess.run(["git", "commit", "--date", commit_date, "-m", f"Auto commit for {commit_date}"], check=True)
 
-def reset_git_history():
-    """Resets Git history (removes all previous contributions)."""
-    subprocess.run(["git", "checkout", "--orphan", "new_branch"], check=True)
-    subprocess.run(["git", "add", "-A"], check=True)
-    subprocess.run(["git", "commit", "-m", "Reset history"], check=True)
-    subprocess.run(["git", "branch", "-D", "master"], check=True)
-    subprocess.run(["git", "branch", "-m", "master"], check=True)
-    subprocess.run(["git", "push", "-f", "origin", "master"], check=True)
-
-
+# Main function
 def main():
-    """Generate commits with varied frequency while skipping one day per week."""
-    reset_git_history()  # Clear previous contributions
-    start_date = datetime.datetime(2025, 2, 1)
-    
-    for week in range(DAYS_TO_FILL // 7 + 1):
-        week_start = start_date + datetime.timedelta(days=week * 7)
-        days = list(range(7))
-        
-        heavy_day = days.pop(random.randint(0, len(days) - 1))  # 20-30 commits
-        medium_day = days.pop(random.randint(0, len(days) - 1))  # 10-20 commits
-        skip_day = days.pop(random.randint(0, len(days) - 1))  # No commits
-        
-        for day in range(7):
-            commit_date = (week_start + datetime.timedelta(days=day)).strftime("%Y-%m-%dT12:00:00")
-            if day == heavy_day:
-                commit_count = random.randint(*HEAVY_RANGE)
-            elif day == medium_day:
-                commit_count = random.randint(*MEDIUM_RANGE)
-            elif day == skip_day:
-                commit_count = 0
-            else:
-                commit_count = random.randint(*LIGHT_RANGE)
-                
-            commit_changes(commit_date, commit_count)
-    
-    # Push to GitHub
-    subprocess.run(["git", "push", "origin", "master"], check=True)
+    """Generate commits based on weekly pattern."""
+    if DAYS_TO_FILL <= 0:
+        print("No past contributions needed. Start committing daily now.")
+        return
 
+    start_date = datetime.datetime(2025, 2, 1)
+
+    # Remove old contributions
+    subprocess.run(["rm", "-f", FILE_NAME], check=False)
+    subprocess.run(["git", "rm", "--cached", FILE_NAME], check=False)
+    subprocess.run(["git", "commit", "-m", "Reset previous contributions"], check=False)
+    subprocess.run(["git", "push", "origin", "master", "--force"], check=True)  # Force push
+
+    # Generate past commits
+    for i in range(DAYS_TO_FILL):
+        commit_date = (start_date + datetime.timedelta(days=i)).strftime("%Y-%m-%dT12:00:00")
+        commit_count = get_commit_count(i)
+
+        if commit_count > 0:
+            commit_changes(commit_date, commit_count)
+
+    # Push all changes
+    subprocess.run(["git", "push", "origin", "master"], check=True)
 
 if __name__ == "__main__":
     main()
