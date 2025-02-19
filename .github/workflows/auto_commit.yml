@@ -2,7 +2,7 @@ name: Auto Commit Bot
 
 on:
   schedule:
-    - cron: "0 12 * * *" # Runs every day at 12 PM UTC
+    - cron: "0 12 * * *"  # Runs every day at 12 PM UTC
   workflow_dispatch:
 
 jobs:
@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensures full repo history
 
       - name: Set Up Python
         uses: actions/setup-python@v3
@@ -19,20 +21,19 @@ jobs:
 
       - name: Set Up Git Identity
         run: |
-          git config --global user.email "saiyamkumar2007+git@gmail.com"
+          git config --global user.email "saiyamkumar2007@gmail.com"
           git config --global user.name "saiyam0211"
+
+      - name: Authenticate GitHub Using Token
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/saiyam0211/bengaluru_ai.git
 
       - name: Run Auto Commit Script
         run: python auto_commit.py
 
-      - name: Push Changes
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+      - name: Force Push Changes
         run: |
-          git config --global user.email "saiyamkumar2007@gmail.com"
-          git config --global user.name "saiyam0211"
-          git remote set-url origin https://saiyam0211:${GH_TOKEN}@github.com/saiyam0211/bengaluru_ai.git
-          git pull origin master
+          git pull origin master --rebase  # Pull latest changes
           git add .
           git commit -m "Automated commit by GitHub Actions" || echo "No changes to commit"
-          git push origin master
+          git push origin master --force  # Push using the token
