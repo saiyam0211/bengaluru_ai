@@ -5,14 +5,6 @@ import ChatPage from './pages/ChatPage';
 import WelcomePage from './pages/WelcomePage';
 import './styles/globals.css';
 
-// Add viewport meta tag for better mobile responsiveness
-if (typeof document !== 'undefined') {
-  const meta = document.createElement('meta');
-  meta.name = 'viewport';
-  meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-  document.head.appendChild(meta);
-}
-
 const App = () => {
   const [showWelcome, setShowWelcome] = useState(false);
   const [isLoading, setIsLoading] = useState(true);

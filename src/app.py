@@ -13,7 +13,7 @@ CORS(app, resources={
 })
 
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent"
-API_KEY = "AIzaSyCmUAeWTRvHbweI7OV_nUad-NAqAlOTpvI"  # Replace with your actual API key
+API_KEY = "AIzaSyCmUAeWTRvHbweI7OV_nUad-NAqAlOTpvI"  
 
 # Updated context with formatting instructions
 BANGALORE_CONTEXT = """You are a specialized AI assistant focused exclusively on Bangalore, India. 
