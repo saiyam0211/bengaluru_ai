@@ -1,70 +1,128 @@
-# Getting Started with Create React App
+# Bangalore AI Guide
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A specialized AI chatbot that provides information exclusively about Bangalore, India. The chatbot is designed to help users learn about tourist spots, local cuisine, technology parks, transportation options, and other aspects of Bangalore.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Specialized Knowledge**: Focused exclusively on Bangalore-related information
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
+- **Beautiful UI**: Modern interface with animations and illustrations
+- **Chat History**: Saves your conversation history locally
+- **Quick Actions**: Suggested prompts for common queries
+- **Welcome Tour**: Guided introduction for first-time users
 
-### `npm start`
+## Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- React.js
+- Tailwind CSS
+- Framer Motion for animations
+- Lucide React for icons
+- Vite for building and development
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Project Structure
 
-### `npm test`
+The project is organized into components, pages, and utility files:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+src/
+├── components/
+│   ├── layout/
+│   │   ├── Sidebar.jsx
+│   │   ├── ChatHeader.jsx
+│   │   └── Layout.jsx
+│   ├── chat/
+│   │   ├── MessageList.jsx
+│   │   ├── MessageItem.jsx
+│   │   ├── InputArea.jsx
+│   │   └── QuickActions.jsx
+│   ├── ui/
+│   │   ├── Button.jsx
+│   │   ├── SearchInput.jsx
+│   │   ├── ErrorMessage.jsx
+│   │   └── LoadingIndicator.jsx
+│   └── illustrations/
+│       ├── BangaloreSkyline.jsx
+│       ├── EmptyChatIllustration.jsx
+│       └── WelcomeIllustration.jsx
+├── pages/
+│   ├── ChatPage.jsx
+│   ├── WelcomePage.jsx
+│   └── NotFoundPage.jsx
+├── hooks/
+│   ├── useChats.js
+│   ├── useWindowSize.js
+│   └── useChatApi.js
+├── context/
+│   └── ChatContext.jsx
+├── utils/
+│   ├── formatters.js
+│   └── constants.js
+├── styles/
+│   └── globals.css
+└── App.jsx
+```
 
-### `npm run build`
+## Getting Started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Prerequisites
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Node.js (v16 or higher)
+- npm or yarn
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Installation
 
-### `npm run eject`
+1. Clone the repository
+```bash
+git clone https://github.com/devitup/bangalore-ai-guide.git
+cd bangalore-ai-guide
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. Install dependencies
+```bash
+npm install
+# or
+yarn install
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. Start the development server
+```bash
+npm run dev
+# or
+yarn dev
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+4. Build for production
+```bash
+npm run build
+# or
+yarn build
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## API Integration
 
-## Learn More
+The chatbot connects to a backend API at `https://bengaluru-ai-1.onrender.com/api/chat`. Make sure the API is accessible before running the application.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Deployment
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+To deploy the application:
 
-### Code Splitting
+1. Build the project
+```bash
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+2. The built files will be in the `dist` directory. Deploy these files to your hosting service.
 
-### Analyzing the Bundle Size
+## Contributions
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/devitup/bangalore-ai-guide/issues).
 
-### Making a Progressive Web App
+## License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+This project is MIT licensed.
 
-### Advanced Configuration
+## Credits
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Made with 🤍 by [DevItUp](https://devitup.in)
+- Illustrations created by the development team
+- Icons provided by [Lucide](https://lucide.dev/)
