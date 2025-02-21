@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Send, User, Bot, Search, Plus, AlertCircle, Menu, X } from 'lucide-react';
+import { Send, User, Bot, Search, Plus, AlertCircle, Menu, X, MapPin, Coffee, Sunrise, Briefcase } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BangaloreChatBot = () => {
@@ -11,6 +11,7 @@ const BangaloreChatBot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [theme, setTheme] = useState('dark');
 
   // Handle sidebar visibility based on screen size
   useEffect(() => {
@@ -51,22 +52,31 @@ const BangaloreChatBot = () => {
     Always maintain accuracy and provide up-to-date information about Bangalore.`
   };
 
-  // Sample quick action prompts specific to Bangalore
+  // Sample quick action prompts specific to Bangalore with icons
   const quickActions = [
     {
       title: "Tourist Places",
       prompt: "What are the must-visit tourist attractions in Bangalore?",
-      description: "Explore popular destinations"
+      description: "Explore popular destinations",
+      icon: <MapPin className="w-5 h-5 text-pink-400" />
     },
     {
       title: "Local Food",
       prompt: "What are some famous local restaurants and food specialties in Bangalore?",
-      description: "Discover Bangalore's cuisine"
+      description: "Discover Bangalore's cuisine",
+      icon: <Coffee className="w-5 h-5 text-yellow-400" />
+    },
+    {
+      title: "Weather",
+      prompt: "How is the weather in Bangalore throughout the year?",
+      description: "Learn about climate patterns",
+      icon: <Sunrise className="w-5 h-5 text-blue-400" />
     },
     {
       title: "Tech Parks",
       prompt: "Tell me about the major technology parks in Bangalore",
-      description: "Learn about IT hubs"
+      description: "Learn about IT hubs",
+      icon: <Briefcase className="w-5 h-5 text-green-400" />
     }
   ];
 
@@ -206,14 +216,21 @@ const BangaloreChatBot = () => {
     exit: { opacity: 0, y: -20, transition: { duration: 0.2 } }
   };
 
+  // Bangalore skyline SVG for desktop and tablet version
+  const BangaloreSkylineSVG = () => (
+    <svg className="absolute bottom-0 left-0 right-0 w-full h-32 opacity-10" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,250 L50,250 L60,230 L75,230 L80,210 L100,210 L100,250 L150,250 L150,200 L170,180 L170,250 L200,250 L220,220 L220,250 L250,250 L250,150 L260,150 L260,250 L300,250 L300,220 L310,220 L310,200 L320,200 L320,250 L350,250 L350,180 L360,180 L360,170 L370,170 L370,250 L400,250 L400,200 L410,200 L410,190 L420,190 L420,250 L450,250 L450,230 L460,230 L460,250 L500,250 L500,180 L510,180 L510,160 L520,160 L520,250 L550,250 L550,200 L560,200 L560,250 L580,250 L580,100 L590,100 L590,250 L600,250 L600,220 L610,220 L610,240 L620,240 L620,250 L650,250 L650,150 L660,150 L660,250 L680,250 L680,200 L685,200 L685,180 L690,180 L690,250 L720,250 L720,220 L725,220 L725,250 L750,250 L750,150 L760,150 L760,250 L800,250 L800,200 L810,200 L810,230 L820,230 L820,250 L850,250 L850,180 L860,180 L860,250 L900,250 L900,170 L910,170 L910,150 L920,150 L920,250 L950,250 L950,210 L960,210 L960,250 L980,250 L980,100 L990,100 L990,80 L1000,80 L1000,250 L1050,250 L1050,150 L1060,150 L1060,250 L1100,250 L1100,200 L1110,200 L1110,180 L1120,180 L1120,250 L1150,250 L1150,220 L1160,220 L1160,250 L1200,250 L1200,300 L0,300 Z" fill="#4B5563"/>
+    </svg>
+  );
+
   return (
-    <div className="flex h-screen bg-black text-white overflow-hidden">
+    <div className="flex h-screen bg-gradient-to-br from-black to-zinc-900 text-white overflow-hidden">
       {/* Mobile Sidebar Backdrop */}
       <AnimatePresence>
         {sidebarOpen && window.innerWidth < 768 && (
           <motion.div 
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
+            animate={{ opacity: 0.7 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black z-10 md:hidden"
             onClick={toggleSidebar}
@@ -223,13 +240,21 @@ const BangaloreChatBot = () => {
 
       {/* Sidebar */}
       <motion.div 
-        className="w-64 bg-zinc-900 p-4 flex flex-col z-20 fixed md:static h-full"
+        className="w-64 bg-zinc-900/80 backdrop-blur-sm p-4 flex flex-col z-20 fixed md:static h-full border-r border-zinc-700/30"
         variants={sidebarVariants}
         initial={window.innerWidth >= 768 ? "open" : "closed"}
         animate={sidebarOpen ? "open" : "closed"}
       >
         <div className="flex items-center justify-between mb-4">
-          <span className="font-semibold">Bangalore AI Guide</span>
+          <div className="flex items-center gap-2">
+            <motion.div
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+            >
+              <Bot className="w-6 h-6 text-green-400" />
+            </motion.div>
+            <span className="font-bold text-lg bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">Bangalore AI</span>
+          </div>
           {window.innerWidth < 768 && (
             <button onClick={toggleSidebar} className="md:hidden">
               <X className="w-5 h-5" />
@@ -242,13 +267,13 @@ const BangaloreChatBot = () => {
           <input 
             type="text"
             placeholder="Search chats"
-            className="w-full bg-zinc-800 pl-10 pr-4 py-2 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+            className="w-full bg-zinc-800/70 pl-10 pr-4 py-2 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500 border border-zinc-700/30"
           />
         </div>
 
         <motion.button 
           onClick={createNewChat}
-          className="mb-4 bg-green-500 text-black rounded-md py-2 px-4 flex items-center justify-center gap-2 hover:bg-green-400"
+          className="mb-6 bg-gradient-to-r from-green-500 to-teal-500 text-black rounded-lg py-2 px-4 flex items-center justify-center gap-2 hover:opacity-90 font-medium shadow-lg shadow-green-500/20"
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
         >
@@ -258,7 +283,7 @@ const BangaloreChatBot = () => {
 
         <div className="flex-1 overflow-y-auto">
           <motion.div 
-            className="space-y-1"
+            className="space-y-1.5"
             initial="hidden"
             animate="visible"
             variants={fadeInVariants}
@@ -267,29 +292,41 @@ const BangaloreChatBot = () => {
               <motion.button 
                 key={chat.id}
                 onClick={() => handleChatSelect(chat.id)}
-                className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2
+                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center gap-2 transition-all duration-200
                   ${activeChat === chat.id 
-                    ? 'bg-zinc-800 text-white' 
-                    : 'text-gray-300 hover:bg-zinc-800/50'
+                    ? 'bg-green-500/10 text-white border border-green-500/30' 
+                    : 'text-gray-300 hover:bg-zinc-800/50 border border-transparent'
                   }`}
-                whileHover={{ backgroundColor: activeChat === chat.id ? "#222" : "#333", x: 2 }}
+                whileHover={{ backgroundColor: activeChat === chat.id ? "rgba(16, 185, 129, 0.15)" : "rgba(39, 39, 42, 0.5)", x: 2 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <Bot className="w-4 h-4 shrink-0" />
+                <Bot className={`w-4 h-4 shrink-0 ${activeChat === chat.id ? 'text-green-400' : 'text-gray-400'}`} />
                 <span className="truncate">{chat.name}</span>
               </motion.button>
             ))}
           </motion.div>
         </div>
-        <div className="footer-text text-xs text-center justify-center">
-          Made with 🤍 by <a href="https://devitup.in" target='_blank' className='font-black'>DevItUp</a>
+
+        {/* Bangalore skyline SVG illustration in sidebar */}
+        <div className="relative mt-6 pt-6 border-t border-zinc-800">
+          <div className="text-xs text-gray-400 mb-1 text-center">Made with 🤍 by</div>
+          <div className="text-center">
+            <a href="https://devitup.in" target='_blank' className='font-bold text-sm bg-gradient-to-r from-green-400 to-teal-500 bg-clip-text text-transparent'>DevItUp</a>
+          </div>
+          <div className="h-16 mt-2 relative overflow-hidden rounded-lg opacity-70">
+            <BangaloreSkylineSVG />
+          </div>
         </div>
       </motion.div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col bg-zinc-900 w-full">
+      <div className="flex-1 flex flex-col bg-zinc-900/30 backdrop-blur-sm w-full relative">
+        {/* Decorative element for desktop/tablet */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-green-500/5 rounded-full filter blur-3xl -z-10"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full filter blur-3xl -z-10"></div>
+
         {/* Chat Header */}
-        <div className="border-b border-zinc-800 p-4 flex items-center">
+        <div className="border-b border-zinc-800/50 backdrop-blur-sm bg-black/30 p-4 flex items-center sticky top-0 z-10">
           {window.innerWidth < 768 && (
             <motion.button 
               onClick={toggleSidebar}
@@ -300,8 +337,8 @@ const BangaloreChatBot = () => {
             </motion.button>
           )}
           <div>
-            <h1 className="text-xl font-semibold">Bangalore City Guide</h1>
-            <p className="text-sm text-gray-400">Ask me anything about Bangalore - from tourist spots to tech parks!</p>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">Bangalore City Guide</h1>
+            <p className="text-sm text-gray-400">Ask me anything about the Silicon Valley of India</p>
           </div>
         </div>
 
@@ -309,7 +346,7 @@ const BangaloreChatBot = () => {
         <AnimatePresence>
           {error && (
             <motion.div 
-              className="m-4 bg-red-900/50 border border-red-500 text-red-200 px-4 py-3 rounded-lg flex items-center gap-2"
+              className="mx-4 mt-4 bg-red-900/30 border border-red-500/50 text-red-200 px-4 py-3 rounded-lg flex items-center gap-2 backdrop-blur-sm"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -321,7 +358,7 @@ const BangaloreChatBot = () => {
         </AnimatePresence>
 
         {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 relative">
           <AnimatePresence initial={false}>
             {currentChat.messages.map((message, index) => (
               <motion.div
@@ -336,24 +373,26 @@ const BangaloreChatBot = () => {
                 layout
               >
                 <motion.div 
-                  className={`max-w-[80%] rounded-lg p-3 ${
+                  className={`max-w-[85%] sm:max-w-[80%] rounded-2xl p-4 shadow-lg ${
                     message.role === 'user' 
-                      ? 'bg-green-500 text-black' 
-                      : 'bg-zinc-800'
+                      ? 'bg-gradient-to-r from-green-500 to-teal-500 text-black rounded-br-none' 
+                      : 'bg-zinc-800/80 backdrop-blur-sm border border-zinc-700/30 rounded-bl-none'
                   }`}
                   whileHover={{ scale: 1.01 }}
                 >
-                  <div className="flex items-center gap-2 mb-1">
-                    {message.role === 'user' ? (
-                      <User className="w-4 h-4" />
-                    ) : (
-                      <Bot className="w-4 h-4" />
-                    )}
-                    <span className="font-semibold">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className={`rounded-full p-1 ${message.role === 'user' ? 'bg-black/10' : 'bg-green-500/10'}`}>
+                      {message.role === 'user' ? (
+                        <User className="w-4 h-4" />
+                      ) : (
+                        <Bot className="w-4 h-4 text-green-400" />
+                      )}
+                    </div>
+                    <span className="font-bold">
                       {message.role === 'user' ? 'You' : 'Bangalore Guide'}
                     </span>
                   </div>
-                  <div className="whitespace-pre-wrap">{message.content}</div>
+                  <div className="whitespace-pre-wrap text-sm sm:text-base">{message.content}</div>
                 </motion.div>
               </motion.div>
             ))}
@@ -361,28 +400,75 @@ const BangaloreChatBot = () => {
           
           {isLoading && (
             <motion.div 
-              className="flex items-center gap-2 text-gray-400 bg-zinc-800 p-3 rounded-lg max-w-[80%]"
+              className="flex items-center gap-3 text-gray-300 bg-zinc-800/80 backdrop-blur-sm p-4 rounded-2xl max-w-[85%] sm:max-w-[80%] border border-zinc-700/30 rounded-bl-none shadow-lg"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              <Bot className="w-4 h-4" />
-              <motion.span
-                initial={{ opacity: 0.5 }}
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                Thinking about Bangalore...
-              </motion.span>
+              <div className="rounded-full p-1 bg-green-500/10">
+                <Bot className="w-4 h-4 text-green-400" />
+              </div>
+              <div className="flex gap-1.5">
+                <motion.div
+                  className="w-2 h-2 rounded-full bg-green-400"
+                  animate={{ scale: [1, 1.5, 1] }}
+                  transition={{ duration: 1, repeat: Infinity, delay: 0 }}
+                />
+                <motion.div
+                  className="w-2 h-2 rounded-full bg-green-400"
+                  animate={{ scale: [1, 1.5, 1] }}
+                  transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
+                />
+                <motion.div
+                  className="w-2 h-2 rounded-full bg-green-400"
+                  animate={{ scale: [1, 1.5, 1] }}
+                  transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
+                />
+              </div>
             </motion.div>
           )}
         </div>
 
-        {/* Quick Actions - Only shown for new chats */}
+        {/* Welcome element with Bangalore illustration for empty chat */}
         <AnimatePresence>
-          {currentChat.messages.length === 0 && (
+          {currentChat.messages.length === 0 && !isLoading && (
             <motion.div 
-              className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+              className="absolute inset-0 flex flex-col items-center justify-center p-4 pointer-events-none"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, repeatType: "reverse" }}
+                className="relative w-40 h-40 mb-6"
+              >
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                  <circle cx="100" cy="100" r="80" fill="#0f766e" fillOpacity="0.1" />
+                  <path d="M60,140 L140,140 L140,70 L100,40 L60,70 Z" fill="#1f2937" />
+                  <path d="M80,140 L100,140 L100,110 L80,110 Z" fill="#4ade80" />
+                  <path d="M75,100 L85,100 L85,90 L75,90 Z" fill="#34d399" />
+                  <path d="M95,100 L105,100 L105,90 L95,90 Z" fill="#34d399" />
+                  <path d="M115,100 L125,100 L125,90 L115,90 Z" fill="#34d399" />
+                  <path d="M75,80 L85,80 L85,70 L75,70 Z" fill="#34d399" />
+                  <path d="M95,80 L105,80 L105,70 L95,70 Z" fill="#34d399" />
+                  <path d="M115,80 L125,80 L125,70 L115,70 Z" fill="#34d399" />
+                  <circle cx="170" cy="60" r="15" fill="#fcd34d" fillOpacity="0.7" />
+                  <path d="M70,30 A30,10 0 0,1 130,30" fill="none" stroke="#a1a1aa" strokeWidth="2" strokeDasharray="2" />
+                  <path d="M60,45 A40,10 0 0,1 140,45" fill="none" stroke="#a1a1aa" strokeWidth="2" strokeDasharray="2" />
+                </svg>
+              </motion.div>
+              <h3 className="text-xl font-bold text-center mb-2 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">Welcome to Bangalore AI Guide</h3>
+              <p className="text-center text-gray-400 max-w-md mb-6">Ask me anything about Bangalore - from tourist spots and local cuisine to tech parks and weather!</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Quick Actions - Only shown for new chats and not when loading */}
+        <AnimatePresence>
+          {currentChat.messages.length === 0 && !isLoading && (
+            <motion.div 
+              className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 relative z-10"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
@@ -392,8 +478,8 @@ const BangaloreChatBot = () => {
                 <motion.button 
                   key={index}
                   onClick={() => handleQuickAction(action.prompt)}
-                  className="p-4 bg-zinc-800 rounded-lg hover:bg-zinc-700 transition-colors text-left"
-                  whileHover={{ scale: 1.03, backgroundColor: "#333" }}
+                  className="p-4 bg-zinc-800/50 backdrop-blur-sm rounded-xl border border-zinc-700/30 hover:border-green-500/30 transition-all text-left shadow-lg"
+                  whileHover={{ scale: 1.03, backgroundColor: "rgba(39, 39, 42, 0.6)" }}
                   whileTap={{ scale: 0.97 }}
                   variants={{
                     hidden: { opacity: 0, y: 20 },
@@ -404,8 +490,13 @@ const BangaloreChatBot = () => {
                   transition={{ delay: index * 0.1 }}
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <Bot className="w-5 h-5 text-green-500" />
-                    <span className="font-medium">{action.title}</span>
+                    <motion.div
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 4, repeat: Infinity, repeatType: "reverse", delay: index * 0.5 }}
+                    >
+                      {action.icon}
+                    </motion.div>
+                    <span className="font-semibold">{action.title}</span>
                   </div>
                   <p className="text-sm text-gray-400">{action.description}</p>
                 </motion.button>
@@ -415,9 +506,9 @@ const BangaloreChatBot = () => {
         </AnimatePresence>
 
         {/* Input Area */}
-        <div className="p-4 border-t border-zinc-800">
+        <div className="p-4 border-t border-zinc-800/50 backdrop-blur-sm bg-black/30 sticky bottom-0 z-10">
           <motion.div 
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 relative"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
@@ -428,14 +519,14 @@ const BangaloreChatBot = () => {
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleSendMessage()}
               placeholder="Ask anything about Bangalore..."
-              className="flex-1 bg-zinc-800 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-green-500"
+              className="flex-1 bg-zinc-800/70 backdrop-blur-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-green-500 border border-zinc-700/30 shadow-lg text-sm sm:text-base"
               disabled={isLoading}
             />
             <motion.button
               onClick={handleSendMessage}
               disabled={isLoading || !inputMessage.trim()}
-              className="p-2 bg-green-500 text-black rounded-lg hover:bg-green-400 disabled:opacity-50 disabled:cursor-not-allowed"
-              whileHover={{ scale: 1.05, backgroundColor: "#22c55e" }}
+              className="p-3 bg-gradient-to-r from-green-500 to-teal-500 text-black rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-green-500/20"
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               <Send className="w-5 h-5" />
